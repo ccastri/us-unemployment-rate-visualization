@@ -181,21 +181,21 @@ print(type(data_years))
 # year_list
 # Convert the index to datetime and find the minimum and maximum dates
 # Filter out non-date values and convert the index to datetime
-date_format = "%Y-%m-%d"
-# valid_dates = [date for date in df_dates.index if len(date) == len("YYYY-MM-DD")]
-df_dates.index = pd.to_datetime(df_dates.index, format=date_format, errors="coerce")
+# date_format = "%Y-%m-%d"
+# # valid_dates = [date for date in df_dates.index if len(date) == len("YYYY-MM-DD")]
+# df_dates.index = pd.to_datetime(df_dates.index, format=date_format, errors="coerce")
 
-valid_dates = pd.to_datetime(df_dates.index, format=date_format)
+# valid_dates = pd.to_datetime(df_dates.index, format=date_format)
 
-# Find the minimum and maximum dates
-startDate = valid_dates.min()
+# # Find the minimum and maximum dates
+# startDate = valid_dates.min()
 
-endDate = valid_dates.max()
-with col1:
-    date1 = pd.to_datetime(st.date_input("Start Date", startDate), format="%Y-%m-%d")
-with col2:
-    date2 = pd.to_datetime(st.date_input("End Date", endDate), format="%Y-%m-%d")
-filtered_df = df_dates.loc[(df_dates.index >= date1) & (df_dates.index <= date2), :]
+# endDate = valid_dates.max()
+# with col1:
+#     date1 = pd.to_datetime(st.date_input("Start Date", startDate), format="%Y-%m-%d")
+# with col2:
+#     date2 = pd.to_datetime(st.date_input("End Date", endDate), format="%Y-%m-%d")
+# filtered_df = df_dates.loc[(df_dates.index >= date1) & (df_dates.index <= date2), :]
 st.sidebar.header("Chose your filter: ")
 
 
