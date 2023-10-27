@@ -48,6 +48,11 @@ st.set_page_config(
     page_icon=":bar-chart:",
     layout="wide",
 )
+# Set the path to the "static" folder
+# st.set_option("server.staticPath", "static")
+
+# Print the contents of the "static" folder
+st.write(os.listdir("static"))
 
 st.title(
     ":bar_chart: Niveles de desempleo en Estados Unidos",
@@ -64,8 +69,8 @@ if fl is not None:
     st.write(filename)
     df = pd.read_csv(filename, encoding="ISO-8859-1")
 else:
-    os.chdir(r"D:\logic")
-    df = pd.read_csv("new_unemployment_df.csv", encoding="ISO-8859-1")
+    default_file_path = os.path.join("static", "new_unemployment_df.csv")
+    df = pd.read_csv(default_file_path, encoding="ISO-8859-1")
 
 col1, col2 = st.columns((2))
 # df["Date"] = pd.to_datetime(df["Date"], format="%Y-%m-%d", errors="coerce")
