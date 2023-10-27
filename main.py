@@ -45,7 +45,7 @@ warnings.filterwarnings("ignore")
 
 st.set_page_config(
     page_title="Desempleo en los estados unidos durante los ultimos 3 años",
-    page_icon=":bar-chart:",
+    page_icon=":bar_chart:",
     layout="wide",
 )
 # Set the path to the "static" folder
@@ -55,7 +55,7 @@ st.set_page_config(
 st.write(os.listdir("static"))
 
 st.title(
-    ":bar-chart: Niveles de desempleo en Estados Unidos",
+    ":bar_chart: Niveles de desempleo en Estados Unidos",
 )
 st.markdown(
     "<style>div.block-container{padding-top:1rem;}</style>", unsafe_allow_html=True
