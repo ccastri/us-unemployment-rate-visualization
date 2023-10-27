@@ -55,7 +55,7 @@ st.set_page_config(
 st.write(os.listdir("static"))
 
 st.title(
-    ":bar_chart: Niveles de desempleo en Estados Unidos",
+    ":bar-chart: Niveles de desempleo en Estados Unidos",
 )
 st.markdown(
     "<style>div.block-container{padding-top:1rem;}</style>", unsafe_allow_html=True
@@ -225,10 +225,10 @@ timestamps = [
     datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S").timestamp()
     for date_str in non_index_df.index
 ]
-timestamps = [datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d") for ts in timestamps]
-non_index_df["Timestamps"] = timestamps
-non_index_df = non_index_df.set_index("Timestamps")
-print(non_index_df)
+# timestamps = [datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d") for ts in timestamps]
+# non_index_df["Timestamps"] = timestamps
+# non_index_df = non_index_df.set_index("Timestamps")
+# print(non_index_df)
 
 # filtered_df = filtered_df.reset_index()
 
