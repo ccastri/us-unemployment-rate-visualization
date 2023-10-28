@@ -36,10 +36,6 @@ else:
 df.set_index("Code", inplace=True)
 st.sidebar.header("Filtrar Datos")
 
-# # Filtrar las filas por estado
-selected_state = st.sidebar.selectbox("Selecciona el estado", df["State"].unique())
-# filtered_data = filtered_data[filtered_data["State"] == selected_state]
-
 
 average_unemployment_2022 = df[[col for col in df.columns if "2022" in col]].mean(
     axis=1
@@ -52,21 +48,6 @@ unemployment_data = pd.DataFrame(
         "unemployment_rate": average_unemployment_2022.values,
     }
 )
-# print(unemployment_data.index)
-fig = px.choropleth(
-    unemployment_data,
-    locations="code",
-    locationmode="USA-states",
-    color="unemployment_rate",
-    scope="usa",
-    title=f"Unemployment Rate in {selected_state} by State",
-)
-
-st.sidebar.header("Chose your filter: ")
-
-
-# Display the choropleth map
-st.plotly_chart(fig)
 
 
 non_index_df = df.reset_index(drop=True)
@@ -92,13 +73,13 @@ filtered_dates = [
 ]
 
 # Crear un selector para elegir el período de estadísticas
-start_date = st.date_input(
+start_date = st.sidebar.date_input(
     "Selecciona la fecha de inicio",
     min_value=filtered_dates[0],
     max_value=filtered_dates[-1],
     value=filtered_dates[0],
 )
-end_date = st.date_input(
+end_date = st.sidebar.date_input(
     "Selecciona la fecha de fin",
     min_value=filtered_dates[0],
     max_value=filtered_dates[-1],
@@ -118,17 +99,30 @@ non_index_df = non_index_df.drop(0)
 
 # Reset the index
 non_index_df = non_index_df.reset_index(drop=True)
-# non_index_df = non_index_df.rename(columns={non_index_df.columns[0]: "Dates"})
+
 
 st.dataframe(non_index_df)
-# non_index_df.rename(columns={"Dates": "State"}, inplace=True)
-# non_index_df.set_index(non_index_df.columns[0], inplace=True)
 
-print(non_index_df)
 
-selected_states = st.multiselect("Selecciona estados en USA", state_names[1:])
+# print(non_index_df)
 
-# Create a dictionary to store data for selected states
+selected_states = st.sidebar.multiselect("Selecciona estados en USA", state_names[1:])
+# print(unemployment_data.index)
+fig = px.choropleth(
+    unemployment_data,
+    locations="code",
+    locationmode="USA-states",
+    color="unemployment_rate",
+    scope="usa",
+    title=f"Unemployment Rate in {selected_states} by State",
+)
+
+st.sidebar.header("Chose your filter: ")
+
+
+# Display the choropleth map
+st.plotly_chart(fig)
+
 data_dict = {}
 
 for state in selected_states:
@@ -138,12 +132,19 @@ for state in selected_states:
         if start_date <= date <= end_date
     ]
     data_dict[state] = state_data
-    # multiplot_selection = state_data  # I want this to be just the three columns pd d
+    # subset_df = non_index_df[selected_states]
+
 
 # Plot line charts for each selected state
 for state, state_data in data_dict.items():
     st.write(state)
     st.line_chart(state_data, use_container_width=True)
+st.subheader("Estadisticas 2021")
+st.write(data_dict)
+# st.write(subset_df)
+
+# Create a dictionary to store data for selected states
+data_dict = {}
 
 
 # Check the lengths of data lists
@@ -178,6 +179,11 @@ st.write(non_index_df)
 
 start_date_str = start_date.strftime("%Y-%m-%d")
 end_date_str = end_date.strftime("%Y-%m-%d")
+subset_df = non_index_df[selected_states]
+# subset_df.index.name = "Dates"
+subset_df = non_index_df[selected_states].loc[start_date:end_date]
+st.dataframe(subset_df)
+print(subset_df)
 filtered_df = non_index_df.loc[
     (non_index_df.index >= start_date) & (non_index_df.index <= end_date)
 ]
@@ -209,3 +215,37 @@ fig = px.line(
 )
 st.write(melted_df)
 st.plotly_chart(fig, use_container_width=True)
+print(data_dict)
+col1, col2 = st.columns(2)
+with col1:
+    st.subheader("Estadisticas 2021")
+    # Create the bar charts for each state using subset_df
+    for state in selected_states:
+        st.write(state)
+
+        # Assuming the 'Dates' are in the index and you want to use the date as the x-axis
+        fig = px.bar(
+            subset_df,
+            x=subset_df.index,  # Use the index (dates) as the x-axis
+            y=state,  # Choose the state column for the y-axis
+            title=f"Tasa de Desempleo en {state}",
+        )
+
+        st.plotly_chart(fig)
+
+# You can put additional content or charts in the second column (col2)
+with col2:
+    st.subheader("Other Content")
+    # Add more content or charts here if needed
+    for state in selected_states:
+        st.write(state)
+
+        # Assuming the 'Dates' are in the index and you want to use the date as the x-axis
+        fig = px.pie(
+            subset_df,
+            x=subset_df.index,  # Use the index (dates) as the x-axis
+            y=state,  # Choose the state column for the y-axis
+            title=f"Tasa de Desempleo en {state}",
+        )
+
+        st.plotly_chart(fig)
