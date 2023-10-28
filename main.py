@@ -196,7 +196,6 @@ filtered_df = filtered_df[1:]
 melted_df = filtered_df.melt(
     var_name="State", value_name="Unemployment Rate", ignore_index=False
 )
-
 # Reset the index to use "Dates" as a regular column
 melted_df.reset_index(inplace=True)
 
@@ -208,4 +207,5 @@ fig = px.line(
     color="State",
     title="Tasa de Desempleo por Estado",
 )
+st.write(melted_df)
 st.plotly_chart(fig, use_container_width=True)
