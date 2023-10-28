@@ -1,38 +1,3 @@
-# import re
-
-# """
-# Documentation for the regex challenge I'm about the deal
-# with hopping I can get more comfortable in searching and
-# extracting data from medical reports
-
-# """
-
-
-# # !FIrst challenge: Email validator:
-# pattern = r"([a-zA-Z0-9_.+-]+)@([a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)"
-
-
-# def check_email_valid_regex(email: str) -> bool:
-#     """_summary_Function has to perform an email check validation using RegEx as the main goal from this challenge
-#     So we both can get ourselves better in this sort of thing
-#     """
-#     print("|-------------------------------------------|")
-#     print("|--------Email regEx validator--------------|")
-#     print("|-------------------------------------------|")
-#     if re.match(pattern, email):
-#         print("|-------------------------------------------|")
-#         print("|---------------User's Email----------------|")
-#         print("|-------------------------------------------|")
-#         return f"{email} valid"
-#     # except:
-#     return f"{email} not valid"
-
-
-# email_to_check = "localhost@admin.com"
-# result = check_email_valid_regex(email_to_check)
-# print(result)
-
-
 import streamlit as st
 import plotly.express as px
 import pandas as pd
@@ -48,11 +13,6 @@ st.set_page_config(
     page_icon=":bar_chart:",
     layout="wide",
 )
-# Set the path to the "static" folder
-# st.set_option("server.staticPath", "static")
-
-# Print the contents of the "static" folder
-# st.write(os.listdir("static"))
 
 st.title(
     ":bar_chart: Niveles de desempleo en Estados Unidos",
@@ -72,16 +32,8 @@ else:
     default_file_path = os.path.join("static", "new_unemployment_df.csv")
     df = pd.read_csv(default_file_path, encoding="ISO-8859-1")
 
-col1, col2 = st.columns((2))
-# df["Date"] = pd.to_datetime(df["Date"], format="%Y-%m-%d", errors="coerce")
-# print(df)
-# data_2022 = df[(df['Date'] >= '2022-01-01') & (df['Date'] <= '2022-12-31')]
+
 df.set_index("Code", inplace=True)
-# print(df)
-
-
-date_columns = [col for col in df.columns if col != "State" and col != "Code"]
-# print(date_columns)
 st.sidebar.header("Filtrar Datos")
 
 # # Filtrar las filas por estado
@@ -89,7 +41,6 @@ selected_state = st.sidebar.selectbox("Selecciona el estado", df["State"].unique
 # filtered_data = filtered_data[filtered_data["State"] == selected_state]
 
 
-data_2022 = df[["State"] + [col for col in df.columns if "2022" in col]]
 average_unemployment_2022 = df[[col for col in df.columns if "2022" in col]].mean(
     axis=1
 )
@@ -110,22 +61,6 @@ fig = px.choropleth(
     scope="usa",
     title=f"Unemployment Rate in {selected_state} by State",
 )
-
-# fig.show()
-df_dates = df.copy()
-# df_dates.reset_index(drop=True, inplace=True)
-# df_dates = df_dates.rename_axis("Dates")  # Rename the index
-df_dates = df_dates.rename(columns={df_dates.columns[0]: "Dates"})
-df_dates = df_dates.T  # Transpose the DataFrame
-# df_dates.columns = df_dates.iloc[0]  # Set the first row as the column headers
-df_dates = df_dates.iloc[1:]  # Remove the first row
-# print(df_dates.index)
-# print(type(df_dates.index))
-# df_dates[0] = "Dates"
-data_years = df[
-    ["State"]
-    + [col for col in df_dates.index if "2020" in col or "2021" in col or "2022" in col]
-]
 
 st.sidebar.header("Chose your filter: ")
 
@@ -153,7 +88,7 @@ non_index_df["Dates"] = non_index_df["Dates"].apply(
 filtered_dates = [
     date.date() if isinstance(date, pd.Timestamp) else date
     for index, date in enumerate(non_index_df["Dates"])
-    if index > 0 and (isinstance(date, pd.Timestamp) or date.year > 2021)
+    if index > 0 and (isinstance(date, pd.Timestamp) or date.year > 2000)
 ]
 
 # Crear un selector para elegir el período de estadísticas
@@ -169,7 +104,7 @@ end_date = st.date_input(
     max_value=filtered_dates[-1],
     value=filtered_dates[-1],
 )
-print(filtered_dates)
+# print(filtered_dates)
 
 state_names = non_index_df.iloc[0][1:].tolist()
 
@@ -183,33 +118,94 @@ non_index_df = non_index_df.drop(0)
 
 # Reset the index
 non_index_df = non_index_df.reset_index(drop=True)
-non_index_df = non_index_df.rename(columns={non_index_df.columns[0]: "Dates"})
-# print(state_names)
-# selected_state = st.selectbox("Selecciona un estado en USA", state_names)
+# non_index_df = non_index_df.rename(columns={non_index_df.columns[0]: "Dates"})
 
-# Crear un selector para elegir el estado
-selected_state = st.selectbox("Selecciona un estado en USA", state_names[1:])
-if selected_state:
-    # Access and display the information from the selected column
-    state_name = selected_state  # Assuming only one state is selected
-    # state_info = non_index_df.loc[selected_state]
-    # filtered_df = non_index_df[non_index_df.index == selected_state]
-    print(selected_state)
-print(non_index_df.T)
-non_index_df.rename(columns={"Dates": "State"}, inplace=True)
-print(non_index_df.T)
-# Obtener el porcentaje de desempleo para el estado seleccionado y el período elegido
-unemployment_rates = [
-    non_index_df.loc[index, selected_state]
-    for index, date in enumerate(filtered_dates)
-    if start_date <= date <= end_date
+st.dataframe(non_index_df)
+# non_index_df.rename(columns={"Dates": "State"}, inplace=True)
+# non_index_df.set_index(non_index_df.columns[0], inplace=True)
+
+print(non_index_df)
+
+selected_states = st.multiselect("Selecciona estados en USA", state_names[1:])
+
+# Create a dictionary to store data for selected states
+data_dict = {}
+
+for state in selected_states:
+    state_data = [
+        non_index_df.loc[index, state]
+        for index, date in enumerate(filtered_dates)
+        if start_date <= date <= end_date
+    ]
+    data_dict[state] = state_data
+    # multiplot_selection = state_data  # I want this to be just the three columns pd d
+
+# Plot line charts for each selected state
+for state, state_data in data_dict.items():
+    st.write(state)
+    st.line_chart(state_data, use_container_width=True)
+
+
+# Check the lengths of data lists
+for state, state_data in data_dict.items():
+    st.write(f"State: {state}, Data Length: {len(state_data)}")
+
+# Ensure the lengths match the length of filtered_dates
+st.write(f"Filtered Dates Length: {len(filtered_dates)}")
+
+st.write(filtered_dates)
+
+# state_data_df = pd.DataFrame(data_dict, index=filtered_dates)
+# st.dataframe(state_data_df)
+
+# data_2022 = df[["State"] + [col for col in non_index_df.columns if {year} in col]]
+
+
+# non_index_df.rename(columns={"Dates": "State"}, inplace=True)
+non_index_df.set_index(non_index_df.columns[0], inplace=True)
+non_index_df.index.name = "Dates"
+# non_index_df = non_index_df.iloc[]
+st.write(non_index_df)
+
+# px.line(non_index_df)
+# Crear una figura con Plotly Express
+# Establecer "Dates" como el índice
+# non_index_df.set_index(0, inplace=True)
+
+# Crear una figura con Plotly Express
+# Crear una figura con Plotly Express
+# Filtrar el DataFrame por fecha
+
+start_date_str = start_date.strftime("%Y-%m-%d")
+end_date_str = end_date.strftime("%Y-%m-%d")
+filtered_df = non_index_df.loc[
+    (non_index_df.index >= start_date) & (non_index_df.index <= end_date)
 ]
-print(type(filtered_dates[0]))
-print(type(start_date))
-print(type(end_date))
 
-# Ahora puedes mostrar los resultados en Streamlit
-st.write(
-    f"Porcentaje de desempleo en, {selected_state}, desde, {start_date}, hasta, {end_date}"
+# Filtrar las columnas para seleccionar solo los estados elegidos
+# Transponer el DataFrame para tener las fechas en el eje x y los estados en el eje y
+# non_index_df.set_index("Dates", inplace=True)
+filtered_df = filtered_df.transpose()
+# Remove the index name
+filtered_df.index.name = None
+
+# Configurar el nombre de la columna de las fechas y el índice
+filtered_df.columns = filtered_df.iloc[0]
+filtered_df = filtered_df[1:]
+# Melt the DataFrame to long format
+melted_df = filtered_df.melt(
+    var_name="State", value_name="Unemployment Rate", ignore_index=False
 )
-st.line_chart(unemployment_rates)
+
+# Reset the index to use "Dates" as a regular column
+melted_df.reset_index(inplace=True)
+
+# Create a line plot with Plotly Express
+fig = px.line(
+    melted_df,
+    x="index",
+    y="Unemployment Rate",
+    color="State",
+    title="Tasa de Desempleo por Estado",
+)
+st.plotly_chart(fig, use_container_width=True)
