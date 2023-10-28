@@ -254,6 +254,7 @@ filtered_dates = [
     for index, date in enumerate(non_index_df["Dates"])
     if index > 0 and (isinstance(date, pd.Timestamp) or date.year > 2021)
 ]
+filtered_dates = [date.date() for date in filtered_dates]
 # # Crear un selector para elegir un estado
 # selected_state = st.selectbox(
 #     "Selecciona un estado en USA",
