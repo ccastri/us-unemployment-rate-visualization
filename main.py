@@ -269,13 +269,13 @@ start_date = st.date_input(
     min_value=filtered_dates[0],
     max_value=filtered_dates[-1],
     value=filtered_dates[0],
-).date()
+)
 end_date = st.date_input(
     "Selecciona la fecha de fin",
     min_value=filtered_dates[0],
     max_value=filtered_dates[-1],
     value=filtered_dates[-1],
-).date()
+)
 # print(non_index_df.)
 
 state_names = non_index_df.iloc[0][1:].tolist()
@@ -301,7 +301,7 @@ print(non_index_df)
 unemployment_rates = [
     non_index_df.loc[index, selected_state]
     for index, date in enumerate(filtered_dates)
-    if start_date <= date <= end_date
+    if start_date <= date.date <= end_date
 ]
 
 # Ahora puedes mostrar los resultados en Streamlit
