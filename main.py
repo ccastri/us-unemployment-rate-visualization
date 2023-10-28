@@ -250,11 +250,10 @@ non_index_df["Dates"] = non_index_df["Dates"].apply(
 
 # Filtrar las fechas y años que cumplan con la condición
 filtered_dates = [
-    date
+    date.date() if isinstance(date, pd.Timestamp) else date
     for index, date in enumerate(non_index_df["Dates"])
-    if index > 0 and date.year > 2021
+    if index > 0 and (isinstance(date, pd.Timestamp) or date.year > 2021)
 ]
-
 # # Crear un selector para elegir un estado
 # selected_state = st.selectbox(
 #     "Selecciona un estado en USA",
@@ -301,8 +300,11 @@ print(non_index_df)
 unemployment_rates = [
     non_index_df.loc[index, selected_state]
     for index, date in enumerate(filtered_dates)
-    if start_date <= date.date <= end_date
+    if start_date <= date <= end_date
 ]
+print(type(filtered_dates[0]))
+print(type(start_date))
+print(type(end_date))
 
 # Ahora puedes mostrar los resultados en Streamlit
 st.write(
