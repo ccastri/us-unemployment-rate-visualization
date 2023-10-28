@@ -52,7 +52,7 @@ st.set_page_config(
 # st.set_option("server.staticPath", "static")
 
 # Print the contents of the "static" folder
-st.write(os.listdir("static"))
+# st.write(os.listdir("static"))
 
 st.title(
     ":bar_chart: Niveles de desempleo en Estados Unidos",
@@ -84,11 +84,6 @@ date_columns = [col for col in df.columns if col != "State" and col != "Code"]
 # print(date_columns)
 st.sidebar.header("Filtrar Datos")
 
-
-# filtered_data = df[
-#     (df[selected_year] == selected_month) & (df[selected_year] == selected_day)
-# ]
-
 # # Filtrar las filas por estado
 selected_state = st.sidebar.selectbox("Selecciona el estado", df["State"].unique())
 # filtered_data = filtered_data[filtered_data["State"] == selected_state]
@@ -99,46 +94,7 @@ average_unemployment_2022 = df[[col for col in df.columns if "2022" in col]].mea
     axis=1
 )
 
-# # Select columns for the years 2020, 2021, and 2022
-# data_years = df[
-#     ["State"]
-#     + [col for col in df.columns if "2020" in col or "2021" in col or "2022" in col]
-# ]
 
-# # Calculate the average unemployment rate for each year
-# average_unemployment_2020 = (
-#     data_years[[col for col in data_years.columns if "2020" in col]]
-#     .mean(axis=1)
-#     .round(2)
-# )
-# average_unemployment_2021 = (
-#     data_years[[col for col in data_years.columns if "2021" in col]]
-#     .mean(axis=1)
-#     .round(2)
-# )
-# average_unemployment_2022 = (
-#     data_years[[col for col in data_years.columns if "2022" in col]]
-#     .mean(axis=1)
-#     .round(2)
-# )
-
-# Now you have the average unemployment rates for each year
-# print(type(average_unemployment_2020))
-# print(average_unemployment_2021)
-# print(average_unemployment_2022)
-
-
-# data = pd.concat(
-#     [average_unemployment_2020, average_unemployment_2021, average_unemployment_2022],
-#     axis=1,
-# )
-# data.columns = ["Unemployment 2020", "Unemployment 2021", "Unemployment 2022"]
-# print(data.T.shape[0])
-# unemployment
-# print(data_2022)
-# average_unemployment_2023 = data_2022.mean(axis=0)
-# print(data_2022)
-# print(unemployment_by_state)
 unemployment_data = pd.DataFrame(
     {
         "code": average_unemployment_2022.index,
@@ -170,56 +126,16 @@ data_years = df[
     ["State"]
     + [col for col in df_dates.index if "2020" in col or "2021" in col or "2022" in col]
 ]
-# print(type(data_years))
-# print(data_years)
 
-
-# data_years = pd.to_datetime(data_years, format="%Y-%m-%d").date
-# df_dates.index = pd.to_datetime(df_dates.index, format="%Y-%m-%d").date
-# print(data_years)
-
-# year_list
-# Convert the index to datetime and find the minimum and maximum dates
-# Filter out non-date values and convert the index to datetime
-# date_format = "%Y-%m-%d"
-# # valid_dates = [date for date in df_dates.index if len(date) == len("YYYY-MM-DD")]
-# df_dates.index = pd.to_datetime(df_dates.index, format=date_format, errors="coerce")
-
-# valid_dates = pd.to_datetime(df_dates.index, format=date_format)
-
-# # Find the minimum and maximum dates
-# startDate = valid_dates.min()
-
-# endDate = valid_dates.max()
-# with col1:
-#     date1 = pd.to_datetime(st.date_input("Start Date", startDate), format="%Y-%m-%d")
-# with col2:
-#     date2 = pd.to_datetime(st.date_input("End Date", endDate), format="%Y-%m-%d")
-# filtered_df = df_dates.loc[(df_dates.index >= date1) & (df_dates.index <= date2), :]
 st.sidebar.header("Chose your filter: ")
 
 
-# Create a choropleth map
-# fig = px.choropleth(
-#     filtered_df,
-#     locations="Date",  # X-axis variable
-#     locationmode="USA-states",
-#     color=selected_state,  # Y-axis variable (color represents unemployment rate)
-#     scope="usa",  # Set the map scope to USA
-#     title=f"Unemployment Rate in {selected_state} by State",
-# )
-
-# # Display the choropleth map
+# Display the choropleth map
 st.plotly_chart(fig)
 
-# if selected_state:
-#     # Access and display the information from the selected column
-#     state_name = selected_state  # Assuming only one state is selected
-#     state_info = df.loc[selected_state]
-#     filtered_df = df[df.index == selected_state]
-#     print(df)
+
 non_index_df = df.reset_index(drop=True)
-# df.rename(columns={"State": ""}, inplace=True)
+
 non_index_df = non_index_df.T
 dates_column = non_index_df.index.tolist()
 non_index_df = non_index_df.reset_index(drop=True)
@@ -227,25 +143,10 @@ non_index_df.insert(0, "Dates", dates_column)
 non_index_df["Dates"][0] = ""
 # print(non_index_df)
 print(non_index_df["Dates"].dtype)
-# non_index_df = non_index_df.reset_index()
-# datetime_list = [
-#     datetime.strptime(date, "%Y-%m-%d %H:%M:%S") if index > 0 else date
-#     for index, date in enumerate(non_index_df["Dates"])
-# ]
+
 non_index_df["Dates"] = non_index_df["Dates"].apply(
-    lambda date: datetime.strptime(date, "%Y-%m-%d %H:%M:%S") if date else ""
+    lambda date: datetime.strptime(date, "%Y-%m-%d %H:%M:%S").date() if date else ""
 )
-# state_names = non_index_df.iloc[0].values
-# # Filtrar las fechas y años que cumplan con la condición
-# selected_state = st.selectbox(
-#     "Selecciona un estado en USA", non_index_df[state_names]
-# )  # Asume que las columnas desde la tercera son nombres de estado
-# print(state_names)
-# filtered_dates = [
-#     date
-#     for index, date in enumerate(non_index_df["Dates"])
-#     if index > 0 and date.year > 2021
-# ]
 
 
 # Filtrar las fechas y años que cumplan con la condición
@@ -254,14 +155,6 @@ filtered_dates = [
     for index, date in enumerate(non_index_df["Dates"])
     if index > 0 and (isinstance(date, pd.Timestamp) or date.year > 2021)
 ]
-# filtered_dates = [date.date() for date in filtered_dates]
-# # Crear un selector para elegir un estado
-# selected_state = st.selectbox(
-#     "Selecciona un estado en USA",
-#     non_index_df.columns[
-#         2:
-#     ],  # Asume que las columnas desde la tercera son nombres de estado
-# )
 
 # Crear un selector para elegir el período de estadísticas
 start_date = st.date_input(
@@ -276,11 +169,11 @@ end_date = st.date_input(
     max_value=filtered_dates[-1],
     value=filtered_dates[-1],
 )
-# print(non_index_df.)
+print(filtered_dates)
 
 state_names = non_index_df.iloc[0][1:].tolist()
 
-# Assuming that df is your DataFrame
+
 # Set the column names to the values in the first row (index 0)
 non_index_df.columns = non_index_df.iloc[0]
 
@@ -296,12 +189,20 @@ non_index_df = non_index_df.rename(columns={non_index_df.columns[0]: "Dates"})
 
 # Crear un selector para elegir el estado
 selected_state = st.selectbox("Selecciona un estado en USA", state_names[1:])
-print(non_index_df)
+if selected_state:
+    # Access and display the information from the selected column
+    state_name = selected_state  # Assuming only one state is selected
+    # state_info = non_index_df.loc[selected_state]
+    # filtered_df = non_index_df[non_index_df.index == selected_state]
+    print(selected_state)
+print(non_index_df.T)
+non_index_df.rename(columns={"Dates": "State"}, inplace=True)
+print(non_index_df.T)
 # Obtener el porcentaje de desempleo para el estado seleccionado y el período elegido
 unemployment_rates = [
     non_index_df.loc[index, selected_state]
     for index, date in enumerate(filtered_dates)
-    if start_date <= date.date() <= end_date
+    if start_date <= date <= end_date
 ]
 print(type(filtered_dates[0]))
 print(type(start_date))
