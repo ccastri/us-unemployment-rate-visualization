@@ -306,6 +306,6 @@ unemployment_rates = [
 
 # Ahora puedes mostrar los resultados en Streamlit
 st.write(
-    "Porcentaje de desempleo en", selected_state, "desde", start_date, "hasta", end_date
+    f"Porcentaje de desempleo en, {selected_state}, desde, {start_date}, hasta, {end_date}"
 )
 st.line_chart(unemployment_rates)
