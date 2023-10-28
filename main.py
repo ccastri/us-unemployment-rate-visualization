@@ -237,15 +237,15 @@ with col1:
 with col2:
     st.subheader("Other Content")
     # Add more content or charts here if needed
-    for state in selected_states:
-        st.write(state)
+    # for state in selected_states:
+    #     st.write(state)
 
-        # Assuming the 'Dates' are in the index and you want to use the date as the x-axis
-        fig = px.pie(
-            subset_df,
-            x=subset_df.index,  # Use the index (dates) as the x-axis
-            y=state,  # Choose the state column for the y-axis
-            title=f"Tasa de Desempleo en {state}",
-        )
+    #     # Assuming the 'Dates' are in the index and you want to use the date as the x-axis
+    #     fig = px.pie(
+    #         subset_df,
+    #         x=subset_df.index,  # Use the index (dates) as the x-axis
+    #         y=state,  # Choose the state column for the y-axis
+    #         title=f"Tasa de Desempleo en {state}",
+    #     )
 
-        st.plotly_chart(fig)
+    #     st.plotly_chart(fig)
