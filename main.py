@@ -301,7 +301,7 @@ print(non_index_df)
 unemployment_rates = [
     non_index_df.loc[index, selected_state]
     for index, date in enumerate(filtered_dates)
-    if start_date <= date <= end_date
+    if start_date <= date.date() <= end_date
 ]
 print(type(filtered_dates[0]))
 print(type(start_date))
